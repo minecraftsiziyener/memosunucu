@@ -1,0 +1,37 @@
+
+name: Build MemoSunucu Plugin
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ZIP dosyasini ac
+        run: |
+          unzip -o MemoSunucu_duzenlenmis.zip
+          ls -la MemoSunucu
+
+      - name: Java 21 kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Maven ile derle
+        run: mvn -B -f MemoSunucu/pom.xml clean package
+
+      - name: JAR dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: MemoSunucu-JAR
+          path: MemoSunucu/target/MemoSunucu.jar
+          if-no-files-found: error
+          
